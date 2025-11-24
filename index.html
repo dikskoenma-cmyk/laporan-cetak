@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Cetak PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #000;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        #printBtn {
+            padding: 10px 20px;
+            border: none;
+            background: #1976d2;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        #printBtn:hover {
+            background: #0d47a1;
+        }
+
+        @media print {
+            #printBtn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="printBtn" onclick="window.print()">Cetak PDF</button>
+
+    <h1>Laporan Transaksi</h1>
+
+    <div class="info">
+        <strong>Tanggal Cetak:</strong> <span id="tanggal"></span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Transaksi</th>
+                <th>Nominal</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="dataBody">
+            <tr>
+                <td>1</td>
+                <td>Contoh</td>
+                <td>Pinjaman</td>
+                <td>200000</td>
+                <td>Aman</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        const tgl = new Date();
+        document.getElementById("tanggal").textContent = tgl.toLocaleDateString("id-ID");
+    </script>
+
+</body>
+</html>
