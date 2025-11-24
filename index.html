@@ -378,7 +378,7 @@
 
     buildDetailTable(data);
     buildRiwayatTable(data);
-    buildQRCode(data);
+    setTimeout(() => buildQRCode(data), 200);
 
     // Kalau nama penyusun mau dinamis dari Glide, tinggal isi di JSON dan set di sini:
     if (data.penyusunNama) {
@@ -389,6 +389,7 @@
 
 </body>
 </html>
+
 
 
 
