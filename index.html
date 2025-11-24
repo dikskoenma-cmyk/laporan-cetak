@@ -352,12 +352,12 @@
     // QR akan berisi parameter terpisah
     const textQR =
        
-       `https://dikskoenma-cmyk.github.io/laporan-cetak/verif.html` +
-       `?kode=${data.nomorPinjaman}` +
-       `&nomor=${data.nomorPinjaman}` +
-       `&total=${data.totalBayar}` +
-       `&status=${encodeURIComponent(data.status)}` +
-       `&hash=${hash}`;
+      `https://dikskoenma-cmyk.github.io/laporan-cetak/verif.html` +
+      `?kode=${data.nomorPinjaman}` +
+      `&nomor=${data.nomorPinjaman}` +
+      `&total=${data.totalBayar}` +
+      `&status=${encodeURIComponent(data.status)}` +
+      `&hash=${hash}`;
 
 
     new QRCode(target, {
@@ -389,5 +389,6 @@
 
 </body>
 </html>
+
 
 
