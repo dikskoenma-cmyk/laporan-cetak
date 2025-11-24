@@ -1,132 +1,373 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Laporan Transaksi</title>
-<style>
+  <meta charset="UTF-8" />
+  <title>Laporan Transaksi</title>
+
+  <!-- QRCode library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --border-color: #555;
+      --gray-light: #efefef;
+      --font-main: Arial, sans-serif;
+    }
+
     body {
-        font-family: Arial, sans-serif;
-        margin: 40px auto;
-        max-width: 900px;
-        line-height: 1.5;
+      font-family: var(--font-main);
+      margin: 40px auto;
+      max-width: 900px;
+      line-height: 1.5;
+      color: #222;
     }
 
-    #printBtn {
-        padding: 10px 20px;
-        border: none;
-        background: #1976d2;
-        color: white;
-        font-size: 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-bottom: 20px;
+    #btn-print {
+      padding: 10px 20px;
+      border: none;
+      background: #1976d2;
+      color: white;
+      font-size: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 20px;
     }
 
-    h1 {
-        text-align: center;
-        margin-bottom: 10px;
+    #btn-print:hover {
+      background: #0d47a1;
     }
 
-    .section-title {
-        font-size: 18px;
-        margin-top: 25px;
-        margin-bottom: 5px;
-        font-weight: bold;
+    .kop {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .kop h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .kop .sub {
+      font-size: 13px;
+      color: #555;
+    }
+
+    hr.kop-line {
+      border: none;
+      border-top: 2px solid #000;
+      margin: 10px 0 20px;
+    }
+
+    .meta {
+      font-size: 13px;
+      margin-bottom: 10px;
+      text-align: right;
     }
 
     table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      font-size: 14px;
     }
 
-    table, th, td {
-        border: 1px solid #444;
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 6px 8px;
+      vertical-align: top;
     }
 
     th {
-        background: #e9ecef;
-        text-align: center;
+      background: var(--gray-light);
+      font-weight: bold;
+      text-align: left;
     }
 
-    td, th {
-        padding: 8px;
+    .table-header-center th {
+      text-align: center;
+    }
+
+    .status-badge {
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .status-lunas {
+      color: #0f5132;
+      background: #d1e7dd;
+    }
+
+    .status-belum {
+      color: #842029;
+      background: #f8d7da;
+    }
+
+    .footer-section {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 13px;
+    }
+
+    .ttd-block {
+      text-align: right;
+    }
+
+    .ttd-nama {
+      margin-top: 60px;
+      font-weight: bold;
+    }
+
+    #qrcode {
+      width: 120px;
+      height: 120px;
     }
 
     @media print {
-        #printBtn { display: none; }
-        body { margin: 10px; }
+      body {
+        margin: 15mm;
+      }
+      #btn-print {
+        display: none;
+      }
+      a {
+        color: black;
+        text-decoration: none;
+      }
     }
-</style>
+  </style>
 </head>
 
 <body>
 
-<button id="printBtn" onclick="window.print()">Cetak PDF</button>
+<button id="btn-print" onclick="window.print()">Cetak PDF</button>
 
-<h1>Laporan Transaksi</h1>
+<div class="kop">
+  <h1>Laporan Transaksi</h1>
+  <div class="sub">Aplikasi ToBeat Debt</div>
+</div>
+<hr class="kop-line" />
 
-<!-- DETAIL -->
-<div id="detail"></div>
+<div class="meta">
+  Dicetak pada: <span id="tanggal-cetak"></span>
+</div>
 
-<!-- RIWAYAT -->
-<div class="section-title">Riwayat Pembayaran</div>
-<table id="riwayatTable">
-    <thead>
-        <tr>
-            <th>Tanggal</th>
-            <th>Nominal</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
+<!-- DETAIL TRANSAKSI -->
+<table id="detail-table">
+  <tbody>
+    <!-- diisi via JS -->
+  </tbody>
 </table>
 
+<!-- RIWAYAT PEMBAYARAN -->
+<h3 style="margin-top:25px;">Riwayat Pembayaran</h3>
+<table id="riwayat-table" class="table-header-center">
+  <thead>
+    <tr>
+      <th style="width: 35%;">Tanggal</th>
+      <th style="width: 35%;">Nominal</th>
+      <th style="width: 30%;">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- diisi via JS -->
+  </tbody>
+</table>
+
+<div class="footer-section">
+  <div>
+    <div style="font-weight:bold; margin-bottom:4px;">Verifikasi Laporan</div>
+    <div id="qrcode"></div>
+  </div>
+
+  <div class="ttd-block">
+    <div>Disusun oleh,</div>
+    <!-- kalau nanti punya file tanda tangan, taruh di sini -->
+    <!-- <img src="tanda_tangan.png" style="width:120px; opacity:0.85;" alt="Tanda tangan"> -->
+    <div class="ttd-nama" id="nama-penyusun">Didik Supriyanto</div>
+  </div>
+</div>
+
 <script>
-function getData() {
+  function parseJSONFromQuery() {
     const url = new URL(window.location.href);
     const raw = url.searchParams.get("data");
     if (!raw) return null;
 
     try {
-        return JSON.parse(raw);
+      // Glide kadang meng-encode karakter, jadi kita decoding dulu
+      const decoded = decodeURIComponent(raw);
+      return JSON.parse(decoded);
     } catch (e) {
-        return null;
+      console.error("Gagal parse JSON dari query:", e);
+      return null;
     }
-}
+  }
 
-const data = getData();
-
-if (data) {
-    // Detail transaksi
-    document.getElementById("detail").innerHTML = `
-        <table>
-            <tr><th>Nomor Pinjaman</th><td>${data.nomorPinjaman}</td></tr>
-            <tr><th>Nama Pemberi Pinjaman</th><td>${data.pemberiNama}</td></tr>
-            <tr><th>No. Telp Pemberi</th><td>${data.pemberiTelp}</td></tr>
-            <tr><th>Nama Peminjam</th><td>${data.peminjamNama}</td></tr>
-            <tr><th>No. Telp Peminjam</th><td>${data.peminjamTelp}</td></tr>
-            <tr><th>Tanggal Penetapan</th><td>${data.tglPenetapan}</td></tr>
-            <tr><th>Jatuh Tempo</th><td>${data.tglJatuhTempo}</td></tr>
-            <tr><th>Pokok Pinjaman</th><td>Rp ${Number(data.pokok).toLocaleString()}</td></tr>
-            <tr><th>Total Pembayaran</th><td>Rp ${Number(data.totalBayar).toLocaleString()}</td></tr>
-            <tr><th>Sisa Pokok</th><td>Rp ${Number(data.sisaPokok).toLocaleString()}</td></tr>
-            <tr><th>Status</th><td>${data.status}</td></tr>
-        </table>
-    `;
-
-    // Riwayat bayar
-    const tbody = document.querySelector("#riwayatTable tbody");
-    data.riwayat.forEach(r => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${r.tanggal}</td>
-                <td>Rp ${Number(r.nominal).toLocaleString()}</td>
-                <td>${r.status}</td>
-            </tr>
-        `;
+  function formatDate(value) {
+    if (!value) return "-";
+    // handle ISO dari Glide (2025-11-05T00:00:00.000Z) atau string biasa
+    const d = new Date(value);
+    if (isNaN(d)) return value; // fallback, biar nggak blank
+    return d.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
     });
-}
+  }
+
+  function formatRupiah(value) {
+    if (value === null || value === undefined || value === "") return "-";
+    const num = Number(value);
+    if (isNaN(num)) return value;
+    return num.toLocaleString("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0
+    });
+  }
+
+  function setTanggalCetak() {
+    const now = new Date();
+    document.getElementById("tanggal-cetak").textContent =
+      now.toLocaleString("id-ID", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+  }
+
+  function buildDetailTable(data) {
+    const tbody = document.querySelector("#detail-table tbody");
+    const rows = [
+      ["Nomor Pinjaman", data.nomorPinjaman],
+      ["Nama Pemberi Pinjaman", data.pemberiNama],
+      ["No. Telp Pemberi", data.pemberiTelp],
+      ["Nama Peminjam", data.peminjamNama],
+      ["No. Telp Peminjam", data.peminjamTelp],
+      ["Tanggal Penetapan", formatDate(data.tglPenetapan)],
+      ["Jatuh Tempo", formatDate(data.tglJatuhTempo)],
+      ["Pokok Pinjaman", formatRupiah(data.pokok)],
+      ["Total Pembayaran", formatRupiah(data.totalBayar)],
+      ["Sisa Pokok", formatRupiah(data.sisaPokok)],
+    ];
+
+    rows.forEach(([label, value]) => {
+      const tr = document.createElement("tr");
+
+      const th = document.createElement("th");
+      th.textContent = label;
+
+      const td = document.createElement("td");
+      td.textContent = value != null ? value : "-";
+
+      tr.appendChild(th);
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    });
+
+    // Baris status dengan badge warna
+    const trStatus = document.createElement("tr");
+    const thStatus = document.createElement("th");
+    thStatus.textContent = "Status";
+
+    const tdStatus = document.createElement("td");
+    const span = document.createElement("span");
+    span.classList.add("status-badge");
+
+    const statusText = (data.status || "").toString();
+    span.textContent = statusText;
+
+    const lower = statusText.toLowerCase();
+    if (lower.includes("lunas") || lower.includes("aman")) {
+      span.classList.add("status-lunas");
+    } else {
+      span.classList.add("status-belum");
+    }
+
+    tdStatus.appendChild(span);
+    trStatus.appendChild(thStatus);
+    trStatus.appendChild(tdStatus);
+    tbody.appendChild(trStatus);
+  }
+
+  function buildRiwayatTable(data) {
+    const tbody = document.querySelector("#riwayat-table tbody");
+    tbody.innerHTML = "";
+
+    if (!data.riwayat || !Array.isArray(data.riwayat) || data.riwayat.length === 0) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 3;
+      td.style.textAlign = "center";
+      td.textContent = "Belum ada riwayat pembayaran";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    data.riwayat.forEach(item => {
+      const tr = document.createElement("tr");
+
+      const tdTanggal = document.createElement("td");
+      tdTanggal.textContent = formatDate(item.tanggal);
+
+      const tdNominal = document.createElement("td");
+      tdNominal.textContent = formatRupiah(item.nominal);
+
+      const tdStatus = document.createElement("td");
+      tdStatus.textContent = item.status || "-";
+      if ((item.status || "").toLowerCase().includes("terverifikasi")) {
+        tdStatus.style.fontWeight = "bold";
+        tdStatus.style.color = "#0f5132";
+      }
+
+      tr.appendChild(tdTanggal);
+      tr.appendChild(tdNominal);
+      tr.appendChild(tdStatus);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function buildQRCode(data) {
+    const target = document.getElementById("qrcode");
+    target.innerHTML = "";
+
+    const url = new URL(window.location.href);
+    // Kalau mau URL verifikasi khusus, bisa ganti di sini.
+    const textQR = url.toString();
+
+    new QRCode(target, {
+      text: textQR,
+      width: 120,
+      height: 120
+    });
+  }
+
+  (function init() {
+    setTanggalCetak();
+    const data = parseJSONFromQuery();
+
+    if (!data) {
+      alert("Data laporan tidak ditemukan. Pastikan parameter ?data= terisi dari Glide.");
+      return;
+    }
+
+    buildDetailTable(data);
+    buildRiwayatTable(data);
+    buildQRCode(data);
+
+    // Kalau nama penyusun mau dinamis dari Glide, tinggal isi di JSON dan set di sini:
+    if (data.penyusunNama) {
+      document.getElementById("nama-penyusun").textContent = data.penyusunNama;
+    }
+  })();
 </script>
 
 </body>
