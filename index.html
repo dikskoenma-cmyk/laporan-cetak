@@ -344,7 +344,21 @@
 
     const url = new URL(window.location.href);
     // Kalau mau URL verifikasi khusus, bisa ganti di sini.
-    const textQR = url.toString();
+    // buat hash dari string_verifikasi
+    const shaObj = new jsSHA("SHA-256", "TEXT");
+    shaObj.update(data.string_verifikasi);
+    const hash = shaObj.getHash("HEX");
+    
+    // QR akan berisi parameter terpisah
+    const textQR =
+       
+       `https://dikskoenma-cmyk.github.io/laporan-cetak/verif.html` +
+       `?kode=${data.nomorPinjaman}` +
+       `&nomor=${data.nomorPinjaman}` +
+       `&total=${data.totalBayar}` +
+       `&status=${encodeURIComponent(data.status)}` +
+       `&hash=${hash}`;
+
 
     new QRCode(target, {
       text: textQR,
@@ -375,4 +389,5 @@
 
 </body>
 </html>
+
 
