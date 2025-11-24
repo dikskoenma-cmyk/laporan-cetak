@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifikasi Laporan ToBeat Debt</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      text-align: center;
+    }
+    .box {
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      padding: 25px;
+      margin-top: 40px;
+    }
+    .valid {
+      background: #d1e7dd;
+      color: #0f5132;
+      border: 1px solid #badbcc;
+      padding: 15px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .invalid {
+      background: #f8d7da;
+      color: #842029;
+      border: 1px solid #f5c2c7;
+      padding: 15px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Verifikasi Keaslian Laporan</h2>
+<p>Mengecek apakah dokumen ini asli dan tidak dimodifikasi.</p>
+
+<div id="hasil" class="box">
+  <i>Memverifikasi data...</i>
+</div>
+
+<script>
+function get(p) {
+  const url = new URL(window.location.href);
+  return url.searchParams.get(p);
+}
+
+function verifikasi() {
+  const kode = get("kode");
+  const nomor = get("nomor");
+  const total = get("total");
+  const status = get("status");
+  const hashQR = get("hash");
+
+  const box = document.getElementById("hasil");
+
+  if (!kode || !nomor || !total || !status || !hashQR) {
+    box.innerHTML = `<div class="invalid">Parameter verifikasi tidak lengkap</div>`;
+    return;
+  }
+
+  // Bentuk ulang string verifikasi (HARUS sama dengan di Glide)
+  const stringAsli = `${nomor}|${total}|${status}`;
+
+  // Hitung hash SHA-256
+  const shaObj = new jsSHA("SHA-256", "TEXT");
+  shaObj.update(stringAsli);
+  const hashDihitung = shaObj.getHash("HEX");
+
+  if (hashDihitung === hashQR) {
+    box.innerHTML =
+      `<div class="valid">
+        Laporan Asli & Terverifikasi ✔
+      </div>
+      <p>Nomor Pinjaman:<br><b>${nomor}</b></p>
+      <p>Status:<br><b>${status}</b></p>`;
+  } else {
+    box.innerHTML =
+      `<div class="invalid">
+        Laporan Tidak Sah / Telah Dimodifikasi ❌
+      </div>
+      <p>Hash tidak cocok.<br>
+      Dokumen ini kemungkinan telah diubah setelah dibuat.</p>`;
+  }
+}
+
+verifikasi();
+</script>
+
+</body>
+</html>
