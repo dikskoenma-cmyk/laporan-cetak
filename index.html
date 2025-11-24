@@ -1,106 +1,133 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Laporan Transaksi</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px auto;
-            max-width: 900px;
-            line-height: 1.4;
-        }
+<meta charset="UTF-8">
+<title>Laporan Transaksi</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 40px auto;
+        max-width: 900px;
+        line-height: 1.5;
+    }
 
-        #printBtn {
-            padding: 10px 20px;
-            border: none;
-            background: #1976d2;
-            color: white;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
+    #printBtn {
+        padding: 10px 20px;
+        border: none;
+        background: #1976d2;
+        color: white;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
 
-        #printBtn:hover {
-            background: #0d47a1;
-        }
+    h1 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 5px;
-        }
+    .section-title {
+        font-size: 18px;
+        margin-top: 25px;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
 
-        .tanggal {
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 20px;
-            color: #444;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+    table, th, td {
+        border: 1px solid #444;
+    }
 
-        table, th, td {
-            border: 1px solid #222;
-        }
+    th {
+        background: #e9ecef;
+        text-align: center;
+    }
 
-        th {
-            background: #e9ecef;
-            text-align: center;
-        }
+    td, th {
+        padding: 8px;
+    }
 
-        td, th {
-            padding: 8px;
-        }
-
-        @media print {
-            #printBtn { display: none; }
-            body { margin: 10px; }
-        }
-    </style>
+    @media print {
+        #printBtn { display: none; }
+        body { margin: 10px; }
+    }
+</style>
 </head>
 
 <body>
 
-    <button id="printBtn" onclick="window.print()">Cetak PDF</button>
+<button id="printBtn" onclick="window.print()">Cetak PDF</button>
 
-    <div class="header">
-        <h1>Laporan Transaksi</h1>
-    </div>
+<h1>Laporan Transaksi</h1>
 
-    <div class="tanggal">
-        Tanggal Cetak: <span id="tanggal"></span>
-    </div>
+<!-- DETAIL -->
+<div id="detail"></div>
 
-    <table>
-        <thead>
+<!-- RIWAYAT -->
+<div class="section-title">Riwayat Pembayaran</div>
+<table id="riwayatTable">
+    <thead>
+        <tr>
+            <th>Tanggal</th>
+            <th>Nominal</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+function getData() {
+    const url = new URL(window.location.href);
+    const raw = url.searchParams.get("data");
+    if (!raw) return null;
+
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+const data = getData();
+
+if (data) {
+    // Detail transaksi
+    document.getElementById("detail").innerHTML = `
+        <table>
+            <tr><th>Nomor Pinjaman</th><td>${data.nomorPinjaman}</td></tr>
+            <tr><th>Nama Pemberi Pinjaman</th><td>${data.pemberiNama}</td></tr>
+            <tr><th>No. Telp Pemberi</th><td>${data.pemberiTelp}</td></tr>
+            <tr><th>Nama Peminjam</th><td>${data.peminjamNama}</td></tr>
+            <tr><th>No. Telp Peminjam</th><td>${data.peminjamTelp}</td></tr>
+            <tr><th>Tanggal Penetapan</th><td>${data.tglPenetapan}</td></tr>
+            <tr><th>Jatuh Tempo</th><td>${data.tglJatuhTempo}</td></tr>
+            <tr><th>Pokok Pinjaman</th><td>Rp ${Number(data.pokok).toLocaleString()}</td></tr>
+            <tr><th>Total Pembayaran</th><td>Rp ${Number(data.totalBayar).toLocaleString()}</td></tr>
+            <tr><th>Sisa Pokok</th><td>Rp ${Number(data.sisaPokok).toLocaleString()}</td></tr>
+            <tr><th>Status</th><td>${data.status}</td></tr>
+        </table>
+    `;
+
+    // Riwayat bayar
+    const tbody = document.querySelector("#riwayatTable tbody");
+    data.riwayat.forEach(r => {
+        tbody.innerHTML += `
             <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Transaksi</th>
-                <th>Nominal</th>
-                <th>Status</th>
+                <td>${r.tanggal}</td>
+                <td>Rp ${Number(r.nominal).toLocaleString()}</td>
+                <td>${r.status}</td>
             </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Contoh</td>
-                <td>Pinjaman</td>
-                <td>200000</td>
-                <td>Aman</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <script>
-        const tgl = new Date();
-        document.getElementById("tanggal").textContent = tgl.toLocaleDateString("id-ID");
-    </script>
+        `;
+    });
+}
+</script>
 
 </body>
 </html>
