@@ -11,91 +11,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha.js"></script>
 
     <style>
-        :root {
-            --border-color: #555;
-            --gray-light: #efefef;
-            --font-main: Arial, sans-serif;
-        }
-
         body {
-            font-family: var(--font-main);
-            margin: 40px auto;
+            font-family: Arial, sans-serif;
             max-width: 900px;
+            margin: 40px auto;
             line-height: 1.5;
             color: #222;
         }
-
-        #btn-print {
-            padding: 10px 20px;
-            border: none;
-            background: #1976d2;
-            color: white;
-            font-size: 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        #btn-print:hover {
-            background: #0d47a1;
-        }
-
-        .kop {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .kop h1 {
-            margin: 0;
-            font-size: 22px;
-        }
-
-        .kop .sub {
-            font-size: 13px;
-            color: #555;
-        }
-
-        hr.kop-line {
-            border: none;
-            border-top: 2px solid #000;
-            margin: 10px 0 20px;
-        }
-
-        .meta {
-            font-size: 13px;
-            margin-bottom: 10px;
-            text-align: right;
-        }
+        h1 { text-align: center; margin-bottom: 5px; }
+        .sub-title { text-align: center; font-size: 14px; margin-bottom: 20px; }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 5px;
-            font-size: 14px;
+            margin-bottom: 25px;
         }
-
         th, td {
-            border: 1px solid var(--border-color);
-            padding: 6px 8px;
-            vertical-align: top;
+            border: 1px solid #555;
+            padding: 8px;
+            font-size: 15px;
         }
-
-        th {
-            background: var(--gray-light);
-            font-weight: bold;
-            text-align: left;
-        }
-
-        .table-header-center th {
-            text-align: center;
-        }
-
-        .status-badge {
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-        }
+        th { background: #efefef; text-align: left; }
 
         .footer-section {
             margin-top: 30px;
@@ -114,17 +50,25 @@
             #btn-print {
               display: none;
             }
-            a {
-              color: black;
-              text-decoration: none;
-            }
         }
     </style>
 </head>
 
 <body>
 
-<button id="btn-print" onclick="window.print()">Cetak PDF</button>
+<button id="btn-print" onclick="window.print()" style="
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 18px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 999;
+">Cetak PDF</button>
 
 <h1>Dokumen Transaksi</h1>
 <div class="sub-title">D'PLan</div>
@@ -304,6 +248,4 @@ function buildQRCode(data) {
 
 </body>
 </html>
-
-
 
