@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Verifikasi Laporan ToBeat Debt</title>
+    <title>Verifikasi Dokumen D"PLan</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha.js"></script>
 
@@ -76,13 +76,13 @@ function verify() {
         document.getElementById("result").innerHTML = `
             <div class="alert success">
                 Dokumen Asli ✔️<br>
-                Hash valid dan laporan tidak dimodifikasi.
+                Valid dan tidak dimodifikasi.
             </div>`;
     } else {
         document.getElementById("result").innerHTML = `
             <div class="alert error">
-                Laporan Tidak Sah ❌<br>
-                Hash tidak cocok. Dokumen kemungkinan telah berubah.
+                Tidak Valid ❌<br>
+                Dokumen kemungkinan telah diubah.
             </div>`;
     }
 }
@@ -92,3 +92,4 @@ verify();
 
 </body>
 </html>
+
