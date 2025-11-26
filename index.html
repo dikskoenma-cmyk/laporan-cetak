@@ -193,8 +193,9 @@ function buildQRCode(data) {
 
     new QRCode(target, {
         text: qrURL,
-        width: 120,
-        height: 120
+        width: 140,
+        height: 140,
+        correctLevel: QRCode.CorrectLevel.L
     });
 }
 
@@ -225,3 +226,4 @@ function buildQRCode(data) {
 
 </body>
 </html>
+
