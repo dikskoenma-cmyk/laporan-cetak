@@ -1,97 +1,93 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Verifikasi Laporan ToBeat Debt</title>
+    <meta charset="UTF-8">
+    <title>Verifikasi Laporan ToBeat Debt</title>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha.js"></script>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-      text-align: center;
-    }
-    .box {
-      border: 1px solid #aaa;
-      border-radius: 10px;
-      padding: 25px;
-      margin-top: 40px;
-    }
-    .valid {
-      background: #d1e7dd;
-      color: #0f5132;
-      border: 1px solid #badbcc;
-      padding: 15px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-    .invalid {
-      background: #f8d7da;
-      color: #842029;
-      border: 1px solid #f5c2c7;
-      padding: 15px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-  </style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .sub {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+        .success {
+            background: #e1f7e7;
+            border: 1px solid #3aa85c;
+            color: #247a3f;
+        }
+        .error {
+            background: #ffe3e3;
+            border: 1px solid #cc4b4b;
+            color: #9b1f1f;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>Verifikasi Keaslian Laporan</h2>
-<p>Mengecek apakah dokumen ini asli dan tidak dimodifikasi.</p>
+<h1>Verifikasi Keaslian Laporan</h1>
+<div class="sub">Mengecek apakah dokumen ini asli dan tidak dimodifikasi.</div>
 
-<div id="hasil" class="box">
-  <i>Memverifikasi data...</i>
-</div>
+<div id="result"></div>
 
 <script>
-function get(p) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(p);
+function getParams() {
+    const url = new URL(window.location.href);
+    return {
+        sv: url.searchParams.get("sv"),
+        hash: url.searchParams.get("hash")
+    };
 }
 
-function verifikasi() {
-  const kode = get("kode");
-  const nomor = get("nomor");
-  const total = get("total");
-  const status = get("status");
-  const hashQR = get("hash");
+function verify() {
+    const p = getParams();
 
-  const box = document.getElementById("hasil");
+    if (!p.sv || !p.hash) {
+        document.getElementById("result").innerHTML = `
+            <div class="alert error">
+                Parameter tidak lengkap. QR code mungkin rusak.
+            </div>`;
+        return;
+    }
 
-  if (!kode || !nomor || !total || !status || !hashQR) {
-    box.innerHTML = `<div class="invalid">Parameter verifikasi tidak lengkap</div>`;
-    return;
-  }
+    const shaObj = new jsSHA("SHA-256", "TEXT");
+    shaObj.update(p.sv);
+    const calculated = shaObj.getHash("HEX");
 
-  // Bentuk ulang string verifikasi (HARUS sama dengan di Glide)
-  const stringAsli = `${nomor}|${total}|${status}`;
-
-  // Hitung hash SHA-256
-  const shaObj = new jsSHA("SHA-256", "TEXT");
-  shaObj.update(stringAsli);
-  const hashDihitung = shaObj.getHash("HEX");
-
-  if (hashDihitung === hashQR) {
-    box.innerHTML =
-      `<div class="valid">
-        Laporan Asli & Terverifikasi ✔
-      </div>
-      <p>Nomor Pinjaman:<br><b>${nomor}</b></p>
-      <p>Status:<br><b>${status}</b></p>`;
-  } else {
-    box.innerHTML =
-      `<div class="invalid">
-        Laporan Tidak Sah / Telah Dimodifikasi ❌
-      </div>
-      <p>Hash tidak cocok.<br>
-      Dokumen ini kemungkinan telah diubah setelah dibuat.</p>`;
-  }
+    if (calculated === p.hash) {
+        document.getElementById("result").innerHTML = `
+            <div class="alert success">
+                Dokumen Asli ✔️<br>
+                Hash valid dan laporan tidak dimodifikasi.
+            </div>`;
+    } else {
+        document.getElementById("result").innerHTML = `
+            <div class="alert error">
+                Laporan Tidak Sah ❌<br>
+                Hash tidak cocok. Dokumen kemungkinan telah berubah.
+            </div>`;
+    }
 }
 
-verifikasi();
+verify();
 </script>
 
 </body>
