@@ -130,6 +130,19 @@ function setTanggalCetak() {
     });
     document.getElementById("tgl-cetak").textContent = "Dicetak pada: " + t;
 }
+    
+function formatTanggal(isoString) {
+    if (!isoString) return "";
+
+    const d = new Date(isoString);
+    if (isNaN(d)) return isoString; // fallback kalau bukan ISO
+
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+
+    return `${dd}-${mm}-${yyyy}`;
+}
 
 // ------------------------------
 // TABLE DETAIL LAPORAN
@@ -142,8 +155,8 @@ function buildDetailTable(data) {
         ["No. Telp Pemberi", data.pemberiTelp],
         ["Nama Peminjam", data.peminjamNama],
         ["No. Telp Peminjam", data.peminjamTelp],
-        ["Tanggal Penetapan", data.tglPenetapan],
-        ["Jatuh Tempo", data.tglJatuhTempo],
+        ["Tanggal Penetapan", formatTanggal(data.tglPenetapan)],
+        ["Jatuh Tempo", formatTanggal(data.tglJatuhTempo)],
         ["Pokok Pinjaman", "Rp " + formatRupiah(data.pokok)],
         ["Total Pembayaran", "Rp " + formatRupiah(data.totalBayar)],
         ["Sisa Pokok", "Rp " + formatRupiah(data.sisaPokok)],
@@ -182,7 +195,7 @@ function buildRiwayatTable(data) {
         const tdNom = document.createElement("td");
         const tdSta = document.createElement("td");
 
-        tdTgl.textContent = item.tanggal;
+        tdTgl.textContent = formatTanggal(item.tanggal);
         tdNom.textContent = "Rp " + formatRupiah(item.nominal);
         tdSta.textContent = item.status;
 
@@ -248,4 +261,5 @@ function buildQRCode(data) {
 
 </body>
 </html>
+
 
